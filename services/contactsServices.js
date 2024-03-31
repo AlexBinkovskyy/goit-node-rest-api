@@ -2,7 +2,6 @@ import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
 
-
 const contactsPath = path.join("db", "contacts.json");
 
 const getList = async () => {
@@ -36,7 +35,7 @@ export async function removeContact(contactId) {
     try {
         const contactToRemove = await getContact(contactId);
         if (!contactToRemove) {
-            return
+            return;
         }
         const newContactList = (await getList()).filter((contact) => contact.id !== contactId);
         await fs.writeFile(contactsPath, JSON.stringify(newContactList, null, 2));
@@ -57,7 +56,7 @@ export async function addContact(name, email, phone) {
         };
         let response = await getList();
         response.push(newContact);
-        await fs.writeFile(contactsPath, JSON.stringify(response));
+        await fs.writeFile(contactsPath, JSON.stringify(response, null, 2));
         return newContact;
     } catch (error) {
         console.log(error.message);
@@ -71,8 +70,16 @@ export async function updateContactById(contactId, data) {
         if (index === -1) {
             return null;
         }
-        contacts[index] = { contactId, ...data };
-        await fs.writeFile(contactsPath, JSON.stringify(contactsPath, null, 2));
+        const { name : dataName, email : dataEmail, phone : dataPhone } = data;
+        const updatedContact = { ...contacts[index] };
+
+        dataName ? (updatedContact.name = dataName) : updatedContact.name;
+        dataEmail ? (updatedContact.email = dataEmail) : updatedContact.email;
+        dataPhone ? (updatedContact.phone = dataPhone) : updatedContact.phone;
+
+        contacts[index] = updatedContact;
+        await fs.writeFile(contactsPath, JSON.stringify(contacts, null, 2));
+        return updatedContact;
     } catch (error) {
         console.log(error.message);
     }
