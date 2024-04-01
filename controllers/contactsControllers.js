@@ -7,9 +7,9 @@ import {
 } from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 
-export const getAllContacts = async (_, res, next) => {
+export const getAllContacts = async (_, res) => {
     const result = await getContacts();
-    res.json(result);
+    !result || !result.length ? res.json({ message: "Data base is empty" }) : res.json(result);
 };
 
 export const getOneContact = async (req, res, next) => {
@@ -25,6 +25,7 @@ export const getOneContact = async (req, res, next) => {
 export const deleteContact = async (req, res, next) => {
     const { id } = req.params;
     const contactToRemove = await removeContact(id);
+    if (!contactToRemove) next(HttpError(404));
     res.json(contactToRemove);
 };
 
@@ -49,5 +50,5 @@ export const updateContact = async (req, res, next) => {
         next(HttpError(404));
         return;
     }
-    res.status(202).json(updatedContact);
+    res.status(200).json(updatedContact);
 };
