@@ -1,54 +1,65 @@
-import {
-    getContactById,
-    getContacts,
-    removeContact,
-    addContact,
-    updateContactById,
-} from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
+import { checkEmptyUpdtObj } from "../midleWare/checkEmptyUpdtObj.js";
+import { checkResponse } from "../midleWare/checkResponse.js";
+import { Contact } from "../models/contact.js";
 
 export const getAllContacts = async (_, res) => {
-    const result = await getContacts();
-    !result || !result.length ? res.json({ message: "Data base is empty" }) : res.json(result);
+  const result = await Contact.find();
+  !result || !result.length
+    ? res.json({ message: "Data base is empty" })
+    : res.json(result);
 };
 
 export const getOneContact = async (req, res, next) => {
-    const { id } = req.params;
-    const result = await getContactById(id);
-    if (!result) {
-        next(HttpError(404));
-        return;
-    }
-    res.json(result);
+  const { id } = req.params;
+  const result = await Contact.findById(id);
+  checkResponse(result, next);
+  res.json(result);
 };
 
 export const deleteContact = async (req, res, next) => {
-    const { id } = req.params;
-    const contactToRemove = await removeContact(id);
-    if (!contactToRemove) next(HttpError(404));
-    res.json(contactToRemove);
+  const { id } = req.params;
+  const contactToRemove = await Contact.findByIdAndDelete(id);
+  checkResponse(contactToRemove);
+  res.json(contactToRemove);
 };
 
 export const createContact = async (req, res, next) => {
-    const { name, email, phone } = req.body;
-    const newContact = await addContact(name, email, phone);
-    res.status(201).json(newContact);
+  const newContact = await Contact.create(req.body);
+  checkResponse(newContact);
+  res.status(201).json(newContact);
 };
 
 export const updateContact = async (req, res, next) => {
-    const { id } = req.params;
-    const { name, email, phone } = req.body;
+  const { id } = req.params;
+  const { ...restParams } = req.body;
+  checkEmptyUpdtObj(restParams, next);
 
-    if (!name && !email && !phone) {
-        next(HttpError(400, "Body must have at least one field"));
-        return;
+  const updatedContact = await Contact.findByIdAndUpdate(
+    id,
+    { ...restParams },
+    {
+      new: true,
     }
-    const data = { name, email, phone };
+  );
+  checkResponse(updatedContact);
+  res.status(200).json(updatedContact);
+};
 
-    const updatedContact = await updateContactById(id, data);
-    if (!updatedContact) {
-        next(HttpError(404));
-        return;
+export const updateStatusContact = async (req, res, next) => {
+  const { contactId } = req.params;
+  const { favorite } = req.body;
+
+  const updatedContact = await Contact.findByIdAndUpdate(
+    contactId,
+    { favorite },
+    {
+      new: true,
     }
-    res.status(200).json(updatedContact);
+  );
+  if (!updatedContact) {
+    next(HttpError(404));
+    return;
+  }
+  res.status(200).json(updatedContact);
 };
