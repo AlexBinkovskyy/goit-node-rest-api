@@ -1,12 +1,12 @@
 import HttpError from "../helpers/HttpError.js";
 import { Contact } from "../models/contact.js";
-import mongoose from "mongoose";
+import { isValidObjectId } from "mongoose";
 
 export const checkIsValidId = () => {
   const func = async (req, res, next) => {
     const { contactId } = req.params;
-    if (!contactId || !mongoose.Types.ObjectId.isValid(contactId)) {
-      next(HttpError(404, 'Invalid ID or Not found'));
+    if (!contactId || !isValidObjectId(contactId)) {
+      next(HttpError(400, 'Invalid ID'));
       return;
     }
     try {
