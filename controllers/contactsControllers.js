@@ -11,15 +11,15 @@ export const getAllContacts = async (_, res) => {
 };
 
 export const getOneContact = async (req, res, next) => {
-  const { id } = req.params;
-  const result = await Contact.findById(id);
+  const { contactId } = req.params;
+  const result = await Contact.findById(contactId);
   checkResponse(result, next);
   res.json(result);
 };
 
 export const deleteContact = async (req, res, next) => {
-  const { id } = req.params;
-  const contactToRemove = await Contact.findByIdAndDelete(id);
+  const { contactId } = req.params;
+  const contactToRemove = await Contact.findByIdAndDelete(contactId);
   checkResponse(contactToRemove);
   res.json(contactToRemove);
 };
@@ -31,12 +31,12 @@ export const createContact = async (req, res, next) => {
 };
 
 export const updateContact = async (req, res, next) => {
-  const { id } = req.params;
+  const { contactId } = req.params;
   const { ...restParams } = req.body;
   checkEmptyUpdtObj(restParams, next);
 
   const updatedContact = await Contact.findByIdAndUpdate(
-    id,
+    contactId,
     { ...restParams },
     {
       new: true,

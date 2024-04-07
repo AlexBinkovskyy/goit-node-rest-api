@@ -19,9 +19,9 @@ const contactsRouter = express.Router();
 
 contactsRouter.get("/", asyncWrapper(getAllContacts));
 
-contactsRouter.get("/:id",checkIsValidId(), asyncWrapper(getOneContact));
+contactsRouter.get("/:contactId",checkIsValidId(), asyncWrapper(getOneContact));
 
-contactsRouter.delete("/:id",checkIsValidId(), asyncWrapper(deleteContact));
+contactsRouter.delete("/:contactId",checkIsValidId(), asyncWrapper(deleteContact));
 
 contactsRouter.post(
   "/",
@@ -30,7 +30,7 @@ contactsRouter.post(
 );
 
 contactsRouter.put(
-  "/:id",
+  "/:contactId",
   checkIsValidId(),
   validateBody(updateContactSchema),
   asyncWrapper(updateContact)
