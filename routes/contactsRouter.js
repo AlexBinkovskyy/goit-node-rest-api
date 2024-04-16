@@ -12,7 +12,7 @@ import {
   createContactSchema,
   updateContactSchema,
   updateFavStatusSchema,
-} from "../schemas/contactsSchemas.js";
+} from "../schemasValidation/contactsSchemas.js";
 import { asyncWrapper } from "../helpers/asyncWrapper.js";
 import { checkIsValidId } from "../midleWare/checkIsValidId.js";
 const contactsRouter = express.Router();
