@@ -7,7 +7,7 @@ import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/auth.js";
 
 dotenv.config();
-const { DB_HOST, PORT = 3000 } = process.env;
+export const {SECRET_KEY, DB_HOST, PORT = 3000 } = process.env;
 const app = express();
 
 mongoose.set("strictQuery", true);

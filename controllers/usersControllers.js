@@ -3,6 +3,7 @@ import {
   checkUserByEmail,
   checkUserCreds,
   createUser,
+  getUserById,
   login,
 } from "../helpers/userServices.js";
 
@@ -28,5 +29,13 @@ export const loginUser = async (req, res, next) => {
       email: loggedUser.email,
       subscription: loggedUser.subscription,
     },
+  });
+};
+
+export const getCurrentUserCreds = async (req, res, next) => {
+  const user = await getUserById(req.user.id);
+  res.status(200).json({
+    email: user.email,
+    subscription: user.subscription,
   });
 };

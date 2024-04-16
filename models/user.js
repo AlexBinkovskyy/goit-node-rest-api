@@ -1,5 +1,4 @@
 import { Schema, model } from "mongoose";
-import lockPass from "bcryptjs";
 
 const userSchema = new Schema(
   {
@@ -20,10 +19,6 @@ const userSchema = new Schema(
     token: {
       type: String,
       default: null,
-    },
-    owner: {
-      type: Schema.Types.ObjectId,
-      ref: "user",
     },
   },
   { versionKey: false }
