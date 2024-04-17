@@ -12,3 +12,7 @@ export const registerLoginUserSchema = Joi.object({
     })
     
 })
+
+export const subscriptionSchema = Joi.object({
+    subscription: Joi.string().valid("starter", "pro", "business").required(),
+  });

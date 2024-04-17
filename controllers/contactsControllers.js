@@ -5,9 +5,13 @@ import { checkResponse } from "../midleWare/checkResponse.js";
 import { Contact } from "../models/contact.js";
 
 export const getAllContacts = async (req, res) => {
-  const { page = 1, limit = 10 } = req.query;
+  const { page = 1, limit = 10, favorite: favor } = req.query;
+  const count = await Contact.countDocuments({ owner: req.user.id });
+  let filter = favor !== undefined
+    ? { owner: req.user.id, favorite: favor }
+    : { owner: req.user.id };
   const result = await Contact.find(
-    { owner: req.user.id },
+    filter,
     {
       createdAt: 0,
       updatedAt: 0,
@@ -16,7 +20,7 @@ export const getAllContacts = async (req, res) => {
   ).populate("owner", { password: 0, token: 0 });
   !result || !result.length
     ? res.json({ message: "Data base is empty" })
-    : res.json(result);
+    : res.json({ page: page, perPage: limit, totallRecords: count, result });
 };
 
 export const getOneContact = async (req, res, next) => {

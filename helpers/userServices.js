@@ -20,12 +20,12 @@ export const compareTokens = (userToken, dbToken) => {
   return userToken === dbToken ? true : false;
 };
 
-export const checkUserByEmail = async ({email}) => {
+export const checkUserByEmail = async ({ email }) => {
   return await User.findOne({ email }, { password: 1, email: 1 });
 };
 
 export const getUserById = async (id, value = 0) => {
-  return await User.findById(id, {password: value});
+  return await User.findById(id, { password: value });
 };
 
 export const checkUserCreds = async (creds) => {
@@ -73,4 +73,8 @@ export const login = async (user) => {
     { new: true }
   );
   return loggedUser;
+};
+
+export const updateSubscription = async (id, userData) => {
+  return await User.findByIdAndUpdate(id, userData, {new: true}, {password: 0, token: 0});
 };

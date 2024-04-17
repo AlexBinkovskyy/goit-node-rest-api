@@ -5,6 +5,7 @@ import {
   createUser,
   getUserById,
   login,
+  updateSubscription,
 } from "../helpers/userServices.js";
 
 export const createNewUser = async (req, res, next) => {
@@ -38,4 +39,11 @@ export const getCurrentUserCreds = async (req, res, next) => {
     email: user.email,
     subscription: user.subscription,
   });
+};
+
+export const updateUserSubscription = async (req, res, next) => {
+  const {_id} = req.user
+  req.user.subscription = req.body.subscription;
+  const updatedUser = await updateSubscription(_id, {subscription: req.user.subscription});
+  res.status(200).json(updatedUser);
 };
