@@ -20,21 +20,21 @@ const contactsRouter = express.Router();
 
 contactsRouter.get(
   "/",
-  // asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkAuthenticity),
   asyncWrapper(getAllContacts)
 );
 
 contactsRouter.get(
   "/:contactId",
   checkIsValidId(),
-  // asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkAuthenticity),
   asyncWrapper(getOneContact)
 );
 
 contactsRouter.delete(
   "/:contactId",
   checkIsValidId(),
-  // asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkAuthenticity),
   asyncWrapper(deleteContact)
 );
 
@@ -49,7 +49,7 @@ contactsRouter.put(
   "/:contactId",
   checkIsValidId(),
   validateBody(updateContactSchema),
-  // asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkAuthenticity),
   asyncWrapper(updateContact)
 );
 
@@ -57,7 +57,7 @@ contactsRouter.patch(
   "/:contactId/favorite",
   checkIsValidId(),
   validateBody(updateFavStatusSchema),
-  // asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkAuthenticity),
   asyncWrapper(updateStatusContact)
 );
 

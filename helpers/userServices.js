@@ -24,12 +24,12 @@ export const checkUserByEmail = async ({email}) => {
   return await User.findOne({ email }, { password: 1, email: 1 });
 };
 
-export const getUserById = async (id) => {
-  return await User.findById(id);
+export const getUserById = async (id, value = 0) => {
+  return await User.findById(id, {password: value});
 };
 
 export const checkUserCreds = async (creds) => {
-  const result = await checkUserByEmail(creds);
+  const result = await checkUserByEmail(creds, 1);
   if (!result) return false;
   const comparepass = await comparePass(creds.password, result.password);
   return comparepass ? result : false;

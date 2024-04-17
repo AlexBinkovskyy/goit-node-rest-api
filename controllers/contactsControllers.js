@@ -1,10 +1,17 @@
 import HttpError from "../helpers/HttpError.js";
+import { findContactById } from "../helpers/findContactById.js";
 import { checkEmptyUpdtObj } from "../midleWare/checkEmptyUpdtObj.js";
 import { checkResponse } from "../midleWare/checkResponse.js";
 import { Contact } from "../models/contact.js";
 
-export const getAllContacts = async (_, res) => {
-  const result = await Contact.find();
+export const getAllContacts = async (req, res) => {
+  const result = await Contact.find(
+    { owner: req.user.id },
+    {
+      createdAt: 0,
+      updatedAt: 0,
+    }
+  );
   !result || !result.length
     ? res.json({ message: "Data base is empty" })
     : res.json(result);
@@ -12,31 +19,45 @@ export const getAllContacts = async (_, res) => {
 
 export const getOneContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const result = await Contact.findById(contactId);
+  const { id: userId } = req.user;
+  const result = await findContactById(contactId);
   checkResponse(result, next);
+  if (result.owner.toString() !== userId)
+    throw HttpError(401, "Not authorised");
   res.json(result);
 };
 
 export const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
-  const contactToRemove = await Contact.findByIdAndDelete(contactId);
+  const { id: userId } = req.user;
+  let contactToRemove = await findContactById(contactId);
+  if (contactToRemove.owner.toString() !== userId)
+    throw HttpError(401, "Not authorised");
+  contactToRemove = await Contact.findByIdAndDelete(contactId, {
+    createdAt: 0,
+    updatedAt: 0,
+  });
   checkResponse(contactToRemove);
-  res.json(contactToRemove);
+  res.json(req.params);
 };
 
 export const createContact = async (req, res, next) => {
-  const {_id: owner} = req.user
-  const newContact = await Contact.create({...req.body, owner});
+  req.body.owner = req.user._id;
+  const newContact = await Contact.create(req.body);
   checkResponse(newContact);
   res.status(201).json(newContact);
 };
 
 export const updateContact = async (req, res, next) => {
   const { contactId } = req.params;
+  const { id: userId } = req.user;
   const { ...restParams } = req.body;
-  checkEmptyUpdtObj(restParams, next);
 
-  const updatedContact = await Contact.findByIdAndUpdate(
+  let updatedContact = await findContactById(contactId);
+  checkEmptyUpdtObj(restParams, next);
+  if (updatedContact.owner.toString() !== userId)
+    throw HttpError(401, "Not authorised");
+  updatedContact = await Contact.findByIdAndUpdate(
     contactId,
     { ...restParams },
     {
@@ -50,8 +71,11 @@ export const updateContact = async (req, res, next) => {
 export const updateStatusContact = async (req, res, next) => {
   const { contactId } = req.params;
   const { favorite } = req.body;
-
-  const updatedContact = await Contact.findByIdAndUpdate(
+  const { id: userId } = req.user;
+  let updatedContact = await findContactById(contactId);
+  if (updatedContact.owner.toString() !== userId)
+    throw HttpError(401, "Not authorised");
+  updatedContact = await Contact.findByIdAndUpdate(
     contactId,
     { favorite },
     {
