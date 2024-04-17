@@ -58,7 +58,7 @@ export const deleteTokenFromUser = async (userData) => {
 export const createUser = async (userData) => {
   userData.password = await hashPassword(userData.password);
   const newUser = new User(userData);
-//   await updateUserWithToken(newUser, newUser._id); in case of register&login by one attempt
+  //await updateUserWithToken(newUser, newUser._id); //in case of register&login by one attempt
   await newUser.save();
   newUser.password = "";
   return newUser;

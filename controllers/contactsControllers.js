@@ -5,13 +5,15 @@ import { checkResponse } from "../midleWare/checkResponse.js";
 import { Contact } from "../models/contact.js";
 
 export const getAllContacts = async (req, res) => {
+  const { page = 1, limit = 10 } = req.query;
   const result = await Contact.find(
     { owner: req.user.id },
     {
       createdAt: 0,
       updatedAt: 0,
-    }
-  );
+    },
+    { skip: limit * (page - 1), limit: limit }
+  ).populate("owner", { password: 0, token: 0 });
   !result || !result.length
     ? res.json({ message: "Data base is empty" })
     : res.json(result);
@@ -22,7 +24,7 @@ export const getOneContact = async (req, res, next) => {
   const { id: userId } = req.user;
   const result = await findContactById(contactId);
   checkResponse(result, next);
-  if (result.owner.toString() !== userId)
+  if (result.owner._id.toString() !== userId)
     throw HttpError(401, "Not authorised");
   res.json(result);
 };
@@ -31,7 +33,7 @@ export const deleteContact = async (req, res, next) => {
   const { contactId } = req.params;
   const { id: userId } = req.user;
   let contactToRemove = await findContactById(contactId);
-  if (contactToRemove.owner.toString() !== userId)
+  if (contactToRemove.owner._id.toString() !== userId)
     throw HttpError(401, "Not authorised");
   contactToRemove = await Contact.findByIdAndDelete(contactId, {
     createdAt: 0,
@@ -55,7 +57,7 @@ export const updateContact = async (req, res, next) => {
 
   let updatedContact = await findContactById(contactId);
   checkEmptyUpdtObj(restParams, next);
-  if (updatedContact.owner.toString() !== userId)
+  if (updatedContact.owner._id.toString() !== userId)
     throw HttpError(401, "Not authorised");
   updatedContact = await Contact.findByIdAndUpdate(
     contactId,
@@ -73,7 +75,7 @@ export const updateStatusContact = async (req, res, next) => {
   const { favorite } = req.body;
   const { id: userId } = req.user;
   let updatedContact = await findContactById(contactId);
-  if (updatedContact.owner.toString() !== userId)
+  if (updatedContact.owner._id.toString() !== userId)
     throw HttpError(401, "Not authorised");
   updatedContact = await Contact.findByIdAndUpdate(
     contactId,
