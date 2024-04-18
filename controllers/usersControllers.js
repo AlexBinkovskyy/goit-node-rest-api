@@ -34,10 +34,9 @@ export const loginUser = async (req, res, next) => {
 };
 
 export const getCurrentUserCreds = async (req, res, next) => {
-  const user = await getUserById(req.user.id);
   res.status(200).json({
-    email: user.email,
-    subscription: user.subscription,
+    email: req.user.email,
+    subscription: req.user.subscription,
   });
 };
 
