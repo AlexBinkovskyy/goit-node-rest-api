@@ -3,7 +3,6 @@ import {
   checkUserByEmail,
   checkUserCreds,
   createUser,
-  getUserById,
   login,
   updateSubscription,
 } from "../helpers/userServices.js";
