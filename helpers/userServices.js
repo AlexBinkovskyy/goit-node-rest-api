@@ -29,7 +29,7 @@ export const getUserById = async (id, value = 0) => {
 };
 
 export const checkUserCreds = async (creds) => {
-  const result = await checkUserByEmail(creds, 1);
+  const result = await checkUserByEmail(creds);
   if (!result) return false;
   const comparepass = await comparePass(creds.password, result.password);
   return comparepass ? result : false;

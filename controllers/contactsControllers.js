@@ -19,7 +19,7 @@ export const getAllContacts = async (req, res) => {
     { skip: limit * (page - 1), limit: limit }
   ).populate("owner", { password: 0, token: 0 });
   !result || !result.length
-    ? res.json({ message: "Data base is empty" })
+    ? res.json({ message: "Data base is empty or bad query" })
     : res.json({ page: page, perPage: limit, totallRecords: count, result });
 };
 
