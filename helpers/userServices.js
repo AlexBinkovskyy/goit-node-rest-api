@@ -76,5 +76,10 @@ export const login = async (user) => {
 };
 
 export const updateSubscription = async (id, userData) => {
-  return await User.findByIdAndUpdate(id, userData, {new: true}, {password: 0, token: 0});
+  return await User.findByIdAndUpdate(
+    id,
+    userData,
+    { new: true },
+    { password: 0, token: 0 }
+  );
 };
