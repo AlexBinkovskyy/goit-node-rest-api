@@ -5,6 +5,7 @@ import { asyncWrapper } from "../helpers/asyncWrapper.js";
 import { registerLoginUserSchema, subscriptionSchema } from "../schemasValidation/usersSchema.js";
 import { createNewUser, getCurrentUserCreds, loginUser, updateUserSubscription } from "../controllers/usersControllers.js";
 import { checkAuthenticity, checkAuthenticityAndLogout } from "../midleWare/checkAuthenticity.js";
+import { upload } from "../midleWare/fileHandlerMdlWare.js";
 
 const authRouter = express.Router();
 
@@ -37,6 +38,11 @@ authRouter.patch(
   asyncWrapper(checkAuthenticity),
   asyncWrapper(updateUserSubscription)
 );
+
+authRouter.post(
+  "/avatars", upload.single('avatar'), async (req, res) => {
+    console.log(req.file);
+  });
 
 
 export default authRouter;

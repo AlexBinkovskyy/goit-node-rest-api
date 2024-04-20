@@ -1,6 +1,7 @@
 import { User } from "../models/user.js";
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
+import crypto from "crypto"
 import { SECRET_KEY } from "../app.js";
 
 const hashPassword = (pass) => bcrypt.hash(pass, 10);
@@ -82,4 +83,12 @@ export const updateSubscription = async (id, userData) => {
     { new: true },
     { password: 0, token: 0 }
   );
+};
+
+export const generateDefaultAvatar = (email) => {
+  const hashedEmail = crypto
+    .createHash("sha256")
+    .update(email.toLowerCase())
+    .digest("hex");
+  return `https://gravatar.com/avatar/${hashedEmail}?d=robohash`
 };
