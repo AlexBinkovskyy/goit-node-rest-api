@@ -1,6 +1,8 @@
 import multer from "multer";
 import path from "node:path";
 import HttpError from "../helpers/HttpError.js";
+import Jimp from "jimp";
+import crypto from "crypto";
 
 const tempDirectory = path.resolve("temp");
 
@@ -23,6 +25,15 @@ export const upload = multer({
   storage: multerConfig,
   fileFilter: filter,
   limits: {
-    fileSize: 2*1024*1024
-  }
+    fileSize: 2 * 1024 * 1024,
+  },
 });
+
+export const processImage = async (req, res, next) => {
+  const hashForName = crypto
+    .Hash("md5")
+    .update(Date.now().toString())
+    .digest("hex");
+  const fileExt = req.file.originalname.split(".").pop().toLowerCase();
+  req.file.originalname = `${req.user.id}_${hashForName}.${fileExt}`;
+};

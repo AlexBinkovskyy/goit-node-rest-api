@@ -11,9 +11,7 @@ import {
 export const createNewUser = async (req, res, next) => {
   if (await checkUserByEmail(req.body))
     throw HttpError(409, "Current email already in use");
-  const avatarUrl = generateDefaultAvatar(req.body.email);
-  req.body.avatarURL = avatarUrl;
-  
+  req.body.avatarURL = generateDefaultAvatar(req.body.email);
   const newUser = await createUser(req.body);
   res.status(201).json({
     user: {

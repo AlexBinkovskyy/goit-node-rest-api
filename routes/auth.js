@@ -2,10 +2,21 @@ import express from "express";
 import validateBody from "../helpers/validateBody.js";
 
 import { asyncWrapper } from "../helpers/asyncWrapper.js";
-import { registerLoginUserSchema, subscriptionSchema } from "../schemasValidation/usersSchema.js";
-import { createNewUser, getCurrentUserCreds, loginUser, updateUserSubscription } from "../controllers/usersControllers.js";
-import { checkAuthenticity, checkAuthenticityAndLogout } from "../midleWare/checkAuthenticity.js";
-import { upload } from "../midleWare/fileHandlerMdlWare.js";
+import {
+  registerLoginUserSchema,
+  subscriptionSchema,
+} from "../schemasValidation/usersSchema.js";
+import {
+  createNewUser,
+  getCurrentUserCreds,
+  loginUser,
+  updateUserSubscription,
+} from "../controllers/usersControllers.js";
+import {
+  checkAuthenticity,
+  checkAuthenticityAndLogout,
+} from "../midleWare/checkAuthenticity.js";
+import { processImage, upload } from "../midleWare/fileHandlerMdlWare.js";
 
 const authRouter = express.Router();
 
@@ -21,10 +32,7 @@ authRouter.post(
   asyncWrapper(loginUser)
 );
 
-authRouter.post(
-  "/logout",
-  asyncWrapper(checkAuthenticityAndLogout)
-);
+authRouter.post("/logout", asyncWrapper(checkAuthenticityAndLogout));
 
 authRouter.get(
   "/current",
@@ -39,10 +47,12 @@ authRouter.patch(
   asyncWrapper(updateUserSubscription)
 );
 
-authRouter.post(
-  "/avatars", upload.single('avatar'), async (req, res) => {
-    console.log(req.file);
-  });
+authRouter.patch(
+  "/avatars",
+  asyncWrapper(checkAuthenticity),
+  upload.single("avatar"),
+  asyncWrapper(processImage)
 
+);
 
 export default authRouter;
