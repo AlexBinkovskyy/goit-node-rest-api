@@ -7,6 +7,7 @@ import fs from "fs/promises";
 import { updateUserAvatar } from "../helpers/userServices.js";
 
 const tempDirectory = path.resolve("temp");
+const pathTo = path.join("public", "avatars/");
 
 const multerConfig = multer.diskStorage({
   destination: tempDirectory,
@@ -30,8 +31,6 @@ export const upload = multer({
     fileSize: 2 * 1024 * 1024,
   },
 });
-
-const pathTo = path.join("public", "avatars/");
 
 export const checkOldAvatar = async (req, res, next) => {
   let oldAvatar = await fs.readdir(pathTo);
