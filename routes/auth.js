@@ -16,7 +16,7 @@ import {
   checkAuthenticity,
   checkAuthenticityAndLogout,
 } from "../midleWare/checkAuthenticity.js";
-import { processImage, upload } from "../midleWare/fileHandlerMdlWare.js";
+import { checkOldAvatar, makeImagePublic, processImage, upload } from "../midleWare/fileHandlerMdlWare.js";
 
 const authRouter = express.Router();
 
@@ -50,9 +50,10 @@ authRouter.patch(
 authRouter.patch(
   "/avatars",
   asyncWrapper(checkAuthenticity),
+  asyncWrapper(checkOldAvatar),
   upload.single("avatar"),
-  asyncWrapper(processImage)
-
+  asyncWrapper(processImage),
+  asyncWrapper(makeImagePublic)
 );
 
 export default authRouter;
