@@ -39,6 +39,10 @@ export const checkOldAvatar = async (req, res, next) => {
 };
 
 export const processImage = async (req, res, next) => {
+  if (req.file === undefined)
+    next(
+      HttpError(400, "body must consist from 'avatar' field and attached image")
+    );
   const hashForName = crypto
     .Hash("md5")
     .update(Date.now().toString())
