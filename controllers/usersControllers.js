@@ -3,6 +3,7 @@ import {
   checkUserByEmail,
   checkUserCreds,
   createUser,
+  generateDefaultAvatar,
   login,
   updateSubscription,
 } from "../helpers/userServices.js";
@@ -10,6 +11,7 @@ import {
 export const createNewUser = async (req, res, next) => {
   if (await checkUserByEmail(req.body))
     throw HttpError(409, "Current email already in use");
+  req.body.avatarURL = generateDefaultAvatar(req.body.email);
   const newUser = await createUser(req.body);
   res.status(201).json({
     user: {
@@ -40,8 +42,10 @@ export const getCurrentUserCreds = async (req, res, next) => {
 };
 
 export const updateUserSubscription = async (req, res, next) => {
-  const {_id} = req.user
+  const { _id } = req.user;
   req.user.subscription = req.body.subscription;
-  const updatedUser = await updateSubscription(_id, {subscription: req.user.subscription});
+  const updatedUser = await updateSubscription(_id, {
+    subscription: req.user.subscription,
+  });
   res.status(200).json(updatedUser);
 };
