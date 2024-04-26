@@ -24,18 +24,14 @@ mongoose
     process.exit(1);
   });
 
-const logOutput = process.env.NODE_ENV === 'dev' ? "tiny" : 'short'
+const logOutput = process.env.NODE_ENV === "dev" ? "tiny" : "short";
 
 app.use(morgan(logOutput));
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'))
-////
-app.get('/', (req, res) => {
-  res.send('Hello World!')
-})
-///
-app.use("/api/users", authRouter)
+app.use(express.static("public"));
+
+app.use("/api/users", authRouter);
 app.use("/api/contacts", contactsRouter);
 
 app.use((_, res) => {

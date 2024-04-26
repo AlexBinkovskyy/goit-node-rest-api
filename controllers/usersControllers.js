@@ -48,13 +48,13 @@ export const updateUserSubscription = async (req, res, next) => {
 
 export const sendVerificationEmail = async (req, res, next) => {
   await emailService(req.user);
-  // res.status(201).json({
-  //   user: {
-  //     email: newUser.email,
-  //     subscription: newUser.subscription,
-  //     message: "Verification code was sent to your registration email",
-  //   },
-  // });
+  res.status(201).json({
+    user: {
+      email: req.user.email,
+      subscription: req.user.subscription,
+      message: "Verification code was sent to your registration email",
+    },
+  });
 };
 
 export const verificationTokenCheck = async (req, res, next) => {

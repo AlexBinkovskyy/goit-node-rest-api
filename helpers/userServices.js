@@ -133,7 +133,7 @@ export const emailService = async (user) => {
     text: "Привіт. Ми тестуємо надсилання листів!",
     html: `<h1>HELLO</h1>
     <p>this is your verivication link:</p>
-    <a href="http://localhost:3000/api/users/verify/${verificationToken}">Verify your email by clicking me!!!</a>
+    <a href="https://node-rest-api-zs36.onrender.com/api/users/verify/${verificationToken}">Verify your email by clicking me!!!</a>
     <p>This link is available for 15 min</p>
     `,
   };
