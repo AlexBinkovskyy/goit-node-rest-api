@@ -11,12 +11,18 @@ import {
   getCurrentUserCreds,
   loginUser,
   updateUserSubscription,
+  verificationTokenCheck,
 } from "../controllers/usersControllers.js";
 import {
   checkAuthenticity,
   checkAuthenticityAndLogout,
 } from "../midleWare/checkAuthenticity.js";
-import { checkOldAvatar, makeImagePublic, processImage, upload } from "../midleWare/fileHandlerMdlWare.js";
+import {
+  checkOldAvatar,
+  makeImagePublic,
+  processImage,
+  upload,
+} from "../midleWare/fileHandlerMdlWare.js";
 
 const authRouter = express.Router();
 
@@ -54,6 +60,11 @@ authRouter.patch(
   upload.single("avatar"),
   asyncWrapper(processImage),
   asyncWrapper(makeImagePublic)
+);
+
+authRouter.get(
+  "/verify/:verificationToken",
+  asyncWrapper(verificationTokenCheck)
 );
 
 export default authRouter;

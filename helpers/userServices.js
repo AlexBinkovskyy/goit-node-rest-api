@@ -22,7 +22,7 @@ export const compareTokens = (userToken, dbToken) => {
 };
 
 export const checkUserByEmail = async ({ email }) => {
-  return await User.findOne({ email }, { password: 1, email: 1 });
+  return await User.findOne({ email }, { password: 1, email: 1, verify: 1 });
 };
 
 export const getUserById = async (id, value = 0) => {
@@ -33,7 +33,7 @@ export const checkUserCreds = async (creds) => {
   const result = await checkUserByEmail(creds);
   if (!result) return false;
   const comparepass = await comparePass(creds.password, result.password);
-  return comparepass ? result : false;
+  return comparepass && result.verify ? result : false;
 };
 
 export const checkTokenPlusUser = async (id, dbToken) => {
@@ -58,6 +58,8 @@ export const deleteTokenFromUser = async (userData) => {
 
 export const createUser = async (userData) => {
   userData.password = await hashPassword(userData.password);
+  userData.avatarURL = generateDefaultAvatar(userData.email);
+  userData.verificationToken = generateVerificationToken(Date.now().toString());
   const newUser = new User(userData);
   //await updateUserWithToken(newUser, newUser._id); //in case of register&login by one attempt
   await newUser.save();
@@ -93,5 +95,22 @@ export const generateDefaultAvatar = (email) => {
   return `https://gravatar.com/avatar/${hashedEmail}?d=robohash`;
 };
 
+export const generateVerificationToken = (data) => {
+  return crypto.createHash("md5").update(data).digest("hex");
+};
+
 export const updateUserAvatar = async (_id, avatarURL) =>
   await User.findByIdAndUpdate(_id, avatarURL);
+
+export const findVerifiedToken = async (verificationToken) => {
+  return await User.findOne(
+    { verificationToken },
+    { verificationToken: 1, verify: 1 }
+  );
+};
+
+export const changeVerificationCreds = async (creds) => {
+  creds.verificationToken = "";
+  creds.verify = true;
+  return await User.findByIdAndUpdate(creds._id, creds, { new: true });
+};
