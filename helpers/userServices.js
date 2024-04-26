@@ -23,7 +23,7 @@ export const compareTokens = (userToken, dbToken) => {
 };
 
 export const checkUserByEmail = async ({ email }) => {
-  return await User.findOne({ email }, { password: 1, email: 1, verify: 1 });
+  return await User.findOne({ email }, { password: 1, email: 1, verify: 1, verificationToken: 1 });
 };
 
 export const getUserById = async (id, value = 0) => {
@@ -112,7 +112,6 @@ export const findVerifiedToken = async (verificationToken) => {
 
 export const emailService = async (user) => {
   const { email, verificationToken } = user;
-  console.log(email, verificationToken);
 
   const config = {
     host: "smtp.ukr.net",

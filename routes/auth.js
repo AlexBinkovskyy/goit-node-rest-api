@@ -4,6 +4,7 @@ import validateBody from "../helpers/validateBody.js";
 import { asyncWrapper } from "../helpers/asyncWrapper.js";
 import {
   registerLoginUserSchema,
+  resendEmailSchema,
   subscriptionSchema,
 } from "../schemasValidation/usersSchema.js";
 import {
@@ -67,6 +68,13 @@ authRouter.patch(
 authRouter.get(
   "/verify/:verificationToken",
   asyncWrapper(verificationTokenCheck)
+);
+
+authRouter.post(
+  "/verify",
+  validateBody(resendEmailSchema),
+  asyncWrapper(sendVerificationEmail)
+  // asyncWrapper(verificationTokenCheck)
 );
 
 export default authRouter;

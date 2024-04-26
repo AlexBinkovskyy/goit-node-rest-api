@@ -13,7 +13,7 @@ import {
 export const createNewUser = async (req, res, next) => {
   if (await checkUserByEmail(req.body))
     throw HttpError(409, "Current email already in use");
-  req.user = await createUser(req.body);
+  req.body = await createUser(req.body);
   next();
 };
 
@@ -47,19 +47,26 @@ export const updateUserSubscription = async (req, res, next) => {
 };
 
 export const sendVerificationEmail = async (req, res, next) => {
-  await emailService(req.user);
+  const user = await checkUserByEmail(req.body)
+ 
+  if (!user) throw HttpError(404, "User not found")
+  if (!user.email) throw HttpError(400, "missing required field email");
+  if (user.verify)
+    throw HttpError(400, "Verification has already been passed");
+
+  await emailService(user);
   res.status(201).json({
     user: {
-      email: req.user.email,
-      subscription: req.user.subscription,
-      message: "Verification code was sent to your registration email",
+      email: req.body.email,
+      subscription: req.body.subscription,
+      message: "Verification email sent",
     },
   });
 };
 
 export const verificationTokenCheck = async (req, res, next) => {
   const checkToken = await findVerifiedToken(req.params.verificationToken);
-  if (!checkToken) throw HttpError(404);
+  if (!checkToken) throw HttpError(404, "User not found");
   changeVerificationCreds(checkToken);
   res.status(200).json({ message: "Verification successful" });
 };
