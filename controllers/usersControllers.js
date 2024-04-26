@@ -4,6 +4,7 @@ import {
   checkUserByEmail,
   checkUserCreds,
   createUser,
+  emailService,
   findVerifiedToken,
   login,
   updateSubscription,
@@ -12,19 +13,13 @@ import {
 export const createNewUser = async (req, res, next) => {
   if (await checkUserByEmail(req.body))
     throw HttpError(409, "Current email already in use");
-  const newUser = await createUser(req.body);
-  res.status(201).json({
-    user: {
-      email: newUser.email,
-      subscription: newUser.subscription,
-      message: "Verification code was sent to your registration email",
-    },
-  });
+  req.user = await createUser(req.body);
+  next();
 };
 
 export const loginUser = async (req, res, next) => {
   const user = await checkUserCreds(req.body);
-  if (!user) throw HttpError(401, "Email or password is wrong");
+  if (!user) throw HttpError(401, "Email or password is wrong or not verified");
   const loggedUser = await login(user);
   res.status(200).json({
     token: loggedUser.token,
@@ -51,9 +46,20 @@ export const updateUserSubscription = async (req, res, next) => {
   res.status(200).json(updatedUser);
 };
 
+export const sendVerificationEmail = async (req, res, next) => {
+  await emailService(req.user);
+  // res.status(201).json({
+  //   user: {
+  //     email: newUser.email,
+  //     subscription: newUser.subscription,
+  //     message: "Verification code was sent to your registration email",
+  //   },
+  // });
+};
+
 export const verificationTokenCheck = async (req, res, next) => {
   const checkToken = await findVerifiedToken(req.params.verificationToken);
   if (!checkToken) throw HttpError(404);
   changeVerificationCreds(checkToken);
-  res.status(200).json({message: 'Verification successful'})
+  res.status(200).json({ message: "Verification successful" });
 };

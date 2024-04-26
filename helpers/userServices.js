@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { SECRET_KEY } from "../app.js";
+import nodemailer from "nodemailer";
 
 const hashPassword = (pass) => bcrypt.hash(pass, 10);
 
@@ -63,8 +64,8 @@ export const createUser = async (userData) => {
   const newUser = new User(userData);
   //await updateUserWithToken(newUser, newUser._id); //in case of register&login by one attempt
   await newUser.save();
-  newUser.password = "";
-  return newUser;
+  newUser.password = undefined;
+  return newUser.toJSON();
 };
 
 export const login = async (user) => {
@@ -107,6 +108,39 @@ export const findVerifiedToken = async (verificationToken) => {
     { verificationToken },
     { verificationToken: 1, verify: 1 }
   );
+};
+
+export const emailService = async (user) => {
+  const { email, verificationToken } = user;
+  console.log(email, verificationToken);
+
+  const config = {
+    host: "smtp.ukr.net",
+    port: 465,
+    secure: true,
+    auth: {
+      user: "alex_bin@ukr.net",
+      pass: process.env.EMAIL_PASS,
+    },
+  };
+
+  const transporter = nodemailer.createTransport(config);
+  const emailOptions = {
+    from: "alex_bin@ukr.net",
+    // to: email,
+    to: "alex_bin@ukr.net",
+    subject: "EMAIL VERIFICATION CODE",
+    text: "Привіт. Ми тестуємо надсилання листів!",
+    html: `<h1>HELLO</h1>
+    <p>this is your verivication link:</p>
+    <a href="http://localhost:3000/api/users/verify/${verificationToken}">Verify your email by clicking me!!!</a>
+    <p>This link is available for 15 min</p>
+    `,
+  };
+  await transporter
+    .sendMail(emailOptions)
+    .then((info) => console.log("1", info))
+    .catch((err) => console.log("2", err));
 };
 
 export const changeVerificationCreds = async (creds) => {

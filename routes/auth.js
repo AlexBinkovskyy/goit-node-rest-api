@@ -10,6 +10,7 @@ import {
   createNewUser,
   getCurrentUserCreds,
   loginUser,
+  sendVerificationEmail,
   updateUserSubscription,
   verificationTokenCheck,
 } from "../controllers/usersControllers.js";
@@ -29,7 +30,8 @@ const authRouter = express.Router();
 authRouter.post(
   "/register",
   validateBody(registerLoginUserSchema),
-  asyncWrapper(createNewUser)
+  asyncWrapper(createNewUser),
+  asyncWrapper(sendVerificationEmail)
 );
 
 authRouter.post(
