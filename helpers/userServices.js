@@ -126,12 +126,11 @@ export const emailService = async (user) => {
   const transporter = nodemailer.createTransport(config);
   const emailOptions = {
     from: "alex_bin@ukr.net",
-    // to: email,
-    to: "alex_bin@ukr.net",
+    to: email,
     subject: "EMAIL VERIFICATION CODE",
     text: "Привіт. Ми тестуємо надсилання листів!",
-    html: `<h1>HELLO</h1>
-    <p>this is your verivication link:</p>
+    html: `<h1>HELLO ${email}</h1>
+    <p>This is your verivication link below:</p>
     <a href="https://node-rest-api-zs36.onrender.com/api/users/verify/${verificationToken}">Verify your email by clicking me!!!</a>
     <p>This link is available for 15 min</p>
     `,
