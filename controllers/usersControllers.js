@@ -47,12 +47,11 @@ export const updateUserSubscription = async (req, res, next) => {
 };
 
 export const sendVerificationEmail = async (req, res, next) => {
-  const user = await checkUserByEmail(req.body)
- 
-  if (!user) throw HttpError(404, "User not found")
+  const user = await checkUserByEmail(req.body);
+
+  if (!user) throw HttpError(404, "User not found");
   if (!user.email) throw HttpError(400, "missing required field email");
-  if (user.verify)
-    throw HttpError(400, "Verification has already been passed");
+  if (user.verify) throw HttpError(400, "Verification has already been passed");
 
   await emailService(user);
   res.status(201).json({
