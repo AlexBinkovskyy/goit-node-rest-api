@@ -7,7 +7,7 @@ import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/auth.js";
 
 dotenv.config();
-export const { SECRET_KEY, DB_HOST, PORT = 3000 } = process.env;
+export const { SECRET_KEY, DB_HOST, PORT = 4000 } = process.env;
 const app = express();
 
 mongoose.set("strictQuery", true);
@@ -30,7 +30,11 @@ app.use(morgan(logOutput));
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'))
-
+////
+app.get('/', (req, res) => {
+  res.send('Hello World!')
+})
+///
 app.use("/api/users", authRouter)
 app.use("/api/contacts", contactsRouter);
 
