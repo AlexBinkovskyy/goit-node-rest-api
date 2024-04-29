@@ -14,6 +14,7 @@ export const createNewUser = async (req, res, next) => {
   if (await checkUserByEmail(req.body))
     throw HttpError(409, "Current email already in use");
   req.body = await createUser(req.body);
+  req.user = "new";
   next();
 };
 
@@ -54,13 +55,19 @@ export const sendVerificationEmail = async (req, res, next) => {
   if (user.verify) throw HttpError(400, "Verification has already been passed");
 
   await emailService(user);
-  res.status(201).json({
-    user: {
-      email: req.body.email,
-      subscription: req.body.subscription,
+  if (req.user === "new") {
+    res.status(201).json({
+      user: {
+        email: req.body.email,
+        subscription: req.body.subscription,
+        message: "Verification email sent",
+      },
+    });
+  } else {
+    res.status(201).json({
       message: "Verification email sent",
-    },
-  });
+    });
+  }
 };
 
 export const verificationTokenCheck = async (req, res, next) => {

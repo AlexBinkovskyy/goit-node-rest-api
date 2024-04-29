@@ -74,7 +74,6 @@ authRouter.post(
   "/verify",
   validateBody(resendEmailSchema),
   asyncWrapper(sendVerificationEmail)
-  // asyncWrapper(verificationTokenCheck)
 );
 
 export default authRouter;
