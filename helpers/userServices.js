@@ -1,9 +1,11 @@
 import { User } from "../models/user.js";
+
 import jwt from "jsonwebtoken";
 import bcrypt from "bcryptjs";
 import crypto from "crypto";
 import { SECRET_KEY } from "../app.js";
 import nodemailer from "nodemailer";
+import {emailTemplate} from "../helpers/__emailTemplate.js"
 
 const hashPassword = (pass) => bcrypt.hash(pass, 10);
 
@@ -131,12 +133,11 @@ export const emailService = async (user) => {
     from: "alex_bin@ukr.net",
     to: email,
     subject: "EMAIL VERIFICATION CODE",
-    text: "Привіт. Ми тестуємо надсилання листів!",
-    html: `<h1>HELLO ${email}</h1>
-    <p>This is your verivication link below:</p>
-    <a href="https://node-rest-api-zs36.onrender.com/api/users/verify/${verificationToken}">Verify your email by clicking me!!!</a>
-    <p>This link is available for 15 min</p>
-    `,
+    text: "verivication link",
+    // html: `<h1>HELLO ${email}</h1>
+    // <p>This is your verivication link below:</p>
+    // <a href="https://node-rest-api-zs36.onrender.com/html/comfirmationPage.html?${verificationToken}">Verify your email by clicking me!!!</a>`
+    html: emailTemplate(`https://node-rest-api-zs36.onrender.com/html/comfirmationPage.html?${verificationToken}`),
   };
   await transporter
     .sendMail(emailOptions)
