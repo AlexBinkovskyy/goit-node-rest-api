@@ -59,12 +59,11 @@ export const sendVerificationEmail = async (req, res, next) => {
     res.status(201).json({
       user: {
         email: req.body.email,
-        subscription: req.body.subscription,
-        message: "Verification email sent",
+        subscription: req.body.subscription
       },
     });
   } else {
-    res.status(201).json({
+    res.status(200).json({
       message: "Verification email sent",
     });
   }
