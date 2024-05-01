@@ -134,10 +134,7 @@ export const emailService = async (user) => {
     to: email,
     subject: "EMAIL VERIFICATION CODE",
     text: "verivication link",
-    // html: `<h1>HELLO ${email}</h1>
-    // <p>This is your verivication link below:</p>
-    // <a href="https://node-rest-api-zs36.onrender.com/html/comfirmationPage.html?${verificationToken}">Verify your email by clicking me!!!</a>`
-    html: emailTemplate(`https://node-rest-api-zs36.onrender.com/html/comfirmationPage.html?${verificationToken}`),
+    html: emailTemplate(`https://node-rest-api-zs36.onrender.com/html/confirmationPage.html?${verificationToken}`),
   };
   await transporter
     .sendMail(emailOptions)
