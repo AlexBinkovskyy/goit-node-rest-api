@@ -13,6 +13,11 @@ window.onload = async () => {
     if (resp.status === 200) {
       const message = "Email has been verified successfuly";
       document.querySelector("h1").textContent = message;
+      const timeoutMilliseconds = 3000;
+
+      const timeoutId = setTimeout(() => {
+        window.location.href = "http://ukr.net";
+      }, timeoutMilliseconds);
     }
   } catch (err) {
     console.log(err);
