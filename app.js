@@ -5,9 +5,11 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import contactsRouter from "./routes/contactsRouter.js";
 import authRouter from "./routes/auth.js";
+import swaggerUi from 'swagger-ui-express'
+import swaggerDocument from './swagger.json' assert { type: 'json' };
 
 dotenv.config();
-export const { SECRET_KEY, DB_HOST, PORT = 3000 } = process.env;
+export const { SECRET_KEY, DB_HOST, PORT = 4000 } = process.env;
 const app = express();
 
 mongoose.set("strictQuery", true);
@@ -24,15 +26,16 @@ mongoose
     process.exit(1);
   });
 
-const logOutput = process.env.NODE_ENV === 'dev' ? "tiny" : 'short'
+const logOutput = process.env.NODE_ENV === "dev" ? "tiny" : "short";
 
 app.use(morgan(logOutput));
 app.use(cors());
 app.use(express.json());
-app.use(express.static('public'))
+app.use(express.static("public"));
 
-app.use("/api/users", authRouter)
+app.use("/api/users", authRouter);
 app.use("/api/contacts", contactsRouter);
+app.use('/api/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 app.use((_, res) => {
   res.status(404).json({ message: "Route not found" });

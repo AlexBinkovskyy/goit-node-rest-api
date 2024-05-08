@@ -4,26 +4,35 @@ import validateBody from "../helpers/validateBody.js";
 import { asyncWrapper } from "../helpers/asyncWrapper.js";
 import {
   registerLoginUserSchema,
+  resendEmailSchema,
   subscriptionSchema,
 } from "../schemasValidation/usersSchema.js";
 import {
   createNewUser,
   getCurrentUserCreds,
   loginUser,
+  sendVerificationEmail,
   updateUserSubscription,
+  verificationTokenCheck,
 } from "../controllers/usersControllers.js";
 import {
   checkAuthenticity,
   checkAuthenticityAndLogout,
 } from "../midleWare/checkAuthenticity.js";
-import { checkOldAvatar, makeImagePublic, processImage, upload } from "../midleWare/fileHandlerMdlWare.js";
+import {
+  checkOldAvatar,
+  makeImagePublic,
+  processImage,
+  upload,
+} from "../midleWare/fileHandlerMdlWare.js";
 
 const authRouter = express.Router();
 
 authRouter.post(
   "/register",
   validateBody(registerLoginUserSchema),
-  asyncWrapper(createNewUser)
+  asyncWrapper(createNewUser),
+  asyncWrapper(sendVerificationEmail)
 );
 
 authRouter.post(
@@ -54,6 +63,17 @@ authRouter.patch(
   upload.single("avatar"),
   asyncWrapper(processImage),
   asyncWrapper(makeImagePublic)
+);
+
+authRouter.get(
+  "/verify/:verificationToken",
+  asyncWrapper(verificationTokenCheck)
+);
+
+authRouter.post(
+  "/verify",
+  validateBody(resendEmailSchema),
+  asyncWrapper(sendVerificationEmail)
 );
 
 export default authRouter;
